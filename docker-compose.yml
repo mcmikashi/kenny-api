@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+#   api:
+#     image: kenny/api:latest
+#     container_name: ${CUSTOMER_NAME}-api
+#     hostname: localhost
+#     restart: always
+#     build:
+#       context: .
+#     ports:
+#       - ${API_PORT}:3001
+#     networks:
+#       - api
+
+  db:
+    image: postgres:latest
+    container_name: ${CUSTOMER_NAME}-db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:5432
+    networks:
+      - db
+      - adminer
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    container_name: ${CUSTOMER_NAME}-adminer
+    restart: always
+    ports:
+      - ${ADM_PORT}:8080
+    networks:
+      - adminer
+      - db
+
+networks:
+  api:
+    driver: bridge
+    name: ${CUSTOMER_NAME}-api
+  db:
+    driver: bridge
+    name: ${CUSTOMER_NAME}-db
+  adminer:
+    driver: bridge
+    name: ${CUSTOMER_NAME}-adminer
+
+volumes:
+  db-data:
+    name: ${CUSTOMER_NAME}-db-data
+
