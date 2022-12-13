@@ -1,5 +1,5 @@
-import { Context, hashPassword, HttpResponseOK, Post, ValidateBody, HttpResponseUnauthorized, verifyPassword } from '@foal/core';
-import { getSecretOrPrivateKey, setAuthCookie } from '@foal/jwt';
+import { Context, hashPassword, HttpResponseOK, Post, ValidateBody, HttpResponseUnauthorized, verifyPassword, HttpResponseNoContent } from '@foal/core';
+import { getSecretOrPrivateKey, setAuthCookie, removeAuthCookie } from '@foal/jwt';
 import { sign } from 'jsonwebtoken';
 import { promisify } from 'util';
 import { User } from '../../entities';
@@ -47,6 +47,13 @@ export class AuthController {
     return new HttpResponseOK({
       token: await this.createJWT(user)
     });
+  }
+
+  @Post('/logout')
+  logout(ctx: Context) {
+    const response = new HttpResponseNoContent();
+    removeAuthCookie(response);
+    return response;
   }
 
   private async createJWT(user: User): Promise<string> {
